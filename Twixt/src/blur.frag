@@ -5,6 +5,7 @@ varying vec4 color;
 varying vec2 uv;
 
 uniform sampler2D Texture;
+uniform float time;
 
 // https://www.shadertoy.com/view/XtlSD7
 

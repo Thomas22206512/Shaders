@@ -5,6 +5,7 @@ varying vec4 color;
 varying vec2 uv;
 
 uniform sampler2D Texture;
+uniform float time;
 
 // https://www.shadertoy.com/view/XtlSD7
 
@@ -20,7 +21,7 @@ vec2 CRTCurveUV(vec2 uv)
 void DrawVignette( inout vec3 color, vec2 uv )
 {
     float vignette = uv.x * uv.y * ( 1.0 - uv.x ) * ( 1.0 - uv.y );
-    vignette = clamp( pow( 16.0 * vignette, 0.3 ), 0.0, 1.0 );
+    vignette = fract(clamp( pow( 16.0 * vignette, 0.3 ), 0.0, 1.0 )*100.0);
     color *= vignette;
 }
 
@@ -28,8 +29,8 @@ void DrawVignette( inout vec3 color, vec2 uv )
 void DrawScanline( inout vec3 color, vec2 uv )
 {
     float iTime = 0.1;
-    float scanline 	= fract(clamp( 0.95 + 0.05 * cos( 3.14 * ( uv.y + 0.008 * iTime ) * 240.0 * 1.0 ), 0.0, 1.0 )*0.9);
-    float grille 	= fract(0.85 + 0.15 * clamp( 1.5 * cos( 3.14 * uv.x * 640.0 * 1.0 ), 0.0, 1.0 )*0.9);
+    float scanline 	= fract(clamp( 0.95 + 0.05 * cos( 3.14 * ( uv.y + 0.008 * iTime ) * 240.0 * 1.0 ), 0.0, 1.0 )*time);
+    float grille 	= fract(0.85 + 0.15 * clamp( 1.5 * cos( 3.14 * uv.x * 640.0 * 1.0 ), 0.0, 1.0 )*time);
     color *= scanline * grille * 1.2;
 }
 
