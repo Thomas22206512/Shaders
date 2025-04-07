@@ -5,11 +5,13 @@ varying vec2 uv;
 uniform sampler2D Texture;
 uniform vec2 texel_size;
 uniform float time; // ⏱️ uniform envoyé depuis Rust
+uniform float iTime;
+uniform vec2 iResolution;
 
 void main() {
     vec4 color = vec4(0.0);
 
-    float blur_strength = 1.0 + sin(time * 2.0) * 3.0;
+    float blur_strength = 100.0 + sin(time * 20.0) * 20.0;
 
     vec2 center_min = vec2(0.2, 0.2);
     vec2 center_max = vec2(0.6, 0.6);
