@@ -1,5 +1,22 @@
 use macroquad::prelude::*;
+fn hsv_to_rgb(h: f32, s: f32, v: f32) -> Color {
+    let h = h.fract() * 6.0;
+    let i = h.floor();
+    let f = h - i;
+    let p = v * (1.0 - s);
+    let q = v * (1.0 - s * f);
+    let t = v * (1.0 - s * (1.0 - f));
 
+    match i as i32 {
+        0 => Color::new(v, t, p, 1.0),
+        1 => Color::new(q, v, p, 1.0),
+        2 => Color::new(p, v, t, 1.0),
+        3 => Color::new(p, q, v, 1.0),
+        4 => Color::new(t, p, v, 1.0),
+        5 => Color::new(v, p, q, 1.0),
+        _ => Color::new(0.0, 0.0, 0.0, 1.0), // fallback
+    }
+}
 #[macroquad::main("Post processing")]
 async fn main() {
     let mut active: bool = true;
@@ -19,7 +36,7 @@ async fn main() {
         let material = load_material(
             ShaderSource::Glsl {
                 vertex: include_str!("blur.vert"),
-                fragment: include_str!("tuto.frag"),
+                fragment: include_str!("code.frag"),
             },
             MaterialParams {
                 uniforms: vec![
@@ -63,10 +80,12 @@ async fn main() {
             ..Default::default()
         });
 
-        clear_background(LIGHTGRAY);
-        draw_line(-30.0, 45.0, 30.0, 45.0, 3.0, BLUE);
-        draw_circle(-45.0, -35.0, 20.0, YELLOW);
-        draw_circle(45.0, -35.0, 20.0, GREEN);
+        clear_background(BLACK);
+        for x in 0..2*screen_width() as usize {
+            let t = x as f32 / (screen_width() + 255.0 as f32);
+            let color = hsv_to_rgb(t, 1.25, 1.0); // HSV → dégradé arc-en-ciel
+            draw_rectangle(x as f32 - screen_width(), 0.0 - screen_height(), 1.0, 2.*screen_height() as f32, color);
+        }
         set_default_camera();
         // drawing to the screen
         if active {
